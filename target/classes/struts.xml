@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+        "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+    <!-- include节点是struts2中组件化的方式 可以将每个功能模块独立到一个xml配置文件中 然后用include节点引用 -->
+    <include file="struts-default.xml"></include>
+
+    <package name="default" extends="struts-default,json-default">
+        <!--定义一个拦截器-->
+        <interceptors>
+            <interceptor name="sessionOut" class="common.MySessionInterceptor"/>
+            <!--拦截器栈-->
+            <interceptor-stack name="myInterceptor">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="sessionOut"/>
+            </interceptor-stack>
+        </interceptors>
+
+        <!--定义全局result-->
+        <global-results>
+            <result name="login">/Login.jsp</result>
+        </global-results>
+
+
+        <!--登录相关action-->
+        <action name="login" class="action.LoginAction" method="userLogin">
+            <result name="success" type="redirect">/jsp/homePage.jsp</result>
+            <result name="failure">/Login.jsp</result>
+        </action>
+
+        <!--角色相关action-->
+        <!--获取角色列表数据-->
+        <action name="role" class="action.RoleAction" method="getRoleList">
+            <result name="success">/jsp/roleList.jsp</result>
+            <result name="failure">/jsp/roleList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--添加角色-->
+        <action name="addRole" class="action.RoleAction" method="addRole">
+            <result name="success" type="redirect">role.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <result name="input">/jsp/addRole.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--角色详情-->
+        <action name="roleDetail" class="action.RoleAction" method="getRoleByID">
+            <result name="success" >/jsp/addRole.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--删除角色-->
+        <action name="delRole" class="action.RoleAction" method="delRole">
+            <result name="success" type="redirect">role.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--角色修改-->
+        <action name="editRole" class="action.RoleAction" method="updateRole">
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+
+        <!--用户相关action-->
+        <!--获取用户列表数据-->
+        <action name="user" class="action.UserAction" method="getUserList">
+            <result name="success">/jsp/userList.jsp</result>
+            <result name="failure">/jsp/userList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--获取添加用户界面的角色map数据-->
+        <action name="getRoleList" class="action.UserAction" method="getRoleList">
+            <result name="success">/jsp/addUser.jsp</result>
+            <result name="failure">/jsp/addUser.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--添加用户-->
+        <action name="addUser" class="action.UserAction" method="addUser">
+            <result name="success" type="redirect">user.action</result>
+            <result name="input">/jsp/addUser.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--禁用用户-->
+        <action name="userDisable" class="action.UserAction" method="disableUser">
+            <result name="success" type="redirect">user.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--启用用户-->
+        <action name="userEnable" class="action.UserAction" method="enableUser">
+            <result name="success" type="redirect">user.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+
+
+
+        <!--左侧用例目录相关-->
+        <action name="addNode" class="action.TreeAction" method="setRootNote">
+            <result name="success" type="redirect">/jsp/homePage.jsp</result>
+            <result name="input">/jsp/homePage.jsp</result>
+            <result name="failure">/jsp/homePage.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--查询所有节点,并以json格式返回-->
+        <action name="nodeQuery" class="action.TreeAction" method="selectAllNodes">
+            <result type="json">
+                <param name="root">jsonData</param>
+            </result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--删除节点-->
+        <action name="deleteNode" class="action.TreeAction" method="deleteNode">
+            <result name="success" >/jsp/homePage.jsp</result>
+            <result name="failure">/jsp/homePage.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--修改节点-->
+        <action name="updateNote" class="action.TreeAction" method="updateNote">
+            <result name="success" >/jsp/homePage.jsp</result>
+            <result name="failure">/jsp/homePage.jsp</result>
+            <result name="input">/jsp/homePage.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+
+
+
+        <!--用例相关-->
+        <!--查询用例列表-->
+        <action name="getCaseList" class="action.CaseAction" method="getCaseList">
+            <result name="success">/jsp/caseList.jsp</result>
+            <result name="failure">/jsp/caseList.jsp</result>
+            <result name="input">/jsp/caseList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        <!--<result type="json">
+            <param name="root">pageBean</param>
+        </result>-->
+        </action>
+        <!--用例详情-->
+        <action name="caseDetail" class="action.CaseAction" method="caseDetail">
+            <result name="success" >/jsp/caseDetail.jsp</result>
+            <result name="failure" >/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--用例修改-->
+        <action name="updateCase" class="action.CaseAction" method="updateCase">
+            <result name="success" type="redirectAction">
+                <param name="actionName">getCaseList</param>
+                <param name="catalog_id">${catalog_id}</param>
+            </result>
+            <result name="failure" >/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--用例添加-->
+        <action name="addCase" class="action.CaseAction" method="getAddCasePage">
+            <result name="success">/jsp/addCase.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <action name="addSingleCase" class="action.CaseAction" method="addCase">
+            <result name="success" type="redirectAction">
+                <param name="actionName">getCaseList</param>
+                <param name="catalog_id">${catalog_id}</param>
+            </result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--用例删除-->
+        <action name="deleteCase" class="action.CaseAction" method="deleteCase">
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+    <!--下载用例模板-->
+        <action name="download" class="action.CaseAction" method="createAndDownExcel">
+            <result name="success">/jsp/caseList.jsp</result>
+            <result name="failure">/jsp/caseList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--导出用例-->
+        <action name="exportExcel" class="action.CaseAction" method="exportCase">
+            <result name="success">/jsp/caseList.jsp</result>
+            <result name="failure">/jsp/caseList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--上传用例-->
+        <action name="uploadFile" class="action.CaseAction" method="uploadFile">
+            <result name="success">/jsp/caseList.jsp</result>
+            <result name="failure">/jsp/caseList.jsp</result>
+            <result name="input">/jsp/caseList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+
+
+        <!--任务相关-->
+        <!--跳转到管理员未开始任务列表-->
+        <action name="adminTaskList" class="action.TaskAction" method="adminTaskList">
+            <result name="success" >/jsp/taskAdmin.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--跳转到创建任务页面-->
+        <action name="goCreateTask" class="action.TaskAction" method="goCreateTask">
+            <result name="success" >/jsp/createTask.jsp</result>
+            <result name="failure">/jsp/createTask.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--跳转到创建任务第二个页面-->
+        <action name="goCreateTaskSec" class="action.TaskAction" method="goCreateTaskSec">
+            <result name="success">/jsp/createTaskSec.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--创建任务-->
+        <action name="createTask" class="action.TaskAction" method="createTask">
+            <result name="success" type="redirect">adminTaskList.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--任务详情-->
+        <action name="taskDetail" class="action.TaskAction" method="getTaskDetail">
+            <result name="success">/jsp/taskDetail.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--发布任务-->
+        <action name="releaseTask" class="action.TaskAction" method="releaseTask">
+            <result name="success" type="redirect">adminTaskList.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--任务修改-->
+        <action name="editTask" class="action.TaskAction" method="editTask">
+            <result name="success" type="redirect">adminTaskList.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--跳转到测试人员未开始任务列表-->
+        <action name="testerTaskList" class="action.TaskAction" method="testerTaskList">
+            <result name="success" >/jsp/taskTester.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--接受任务-->
+        <action name="acceptTask" class="action.TaskAction" method="acceptTask">
+            <result name="success" type="redirect">testerTaskList.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--待执行用例列表-->
+        <action name="runningTask" class="action.TaskAction" method="getTaskDetail">
+            <result name="success">/jsp/runningTask.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--获取测试用例列表-->
+        <action name="runCaseDetail" class="action.RunAction" method="getRunCaseDetail">
+            <result name="success">/jsp/caseDetail.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--执行测试用例-->
+        <action name="runCase" class="action.RunAction" method="saveCaseResult">
+            <result name="success" type="json">
+                <param name="root">jsonData</param>
+            </result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--拒绝任务-->
+        <action name="refuseTask" class="action.TaskAction" method="refuseTask">
+            <result name="success" type="redirect">testerTaskList.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+
+        <!--脚本相关action-->
+        <!--获取脚本列表数据-->
+        <action name="script" class="action.ScriptAction" method="getScriptList">
+            <result name="success">/jsp/scriptList.jsp</result>
+            <result name="failure">/jsp/scriptList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--添加脚本-->
+        <action name="addScript" class="action.ScriptAction" method="addScript">
+            <result name="success" type="redirect">script.action</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--脚本详情-->
+        <action name="scriptDetail" class="action.ScriptAction" method="getScriptById">
+            <result name="success">/jsp/addScript.jsp</result>
+            <result name="failure">/jsp/error.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+        <!--删除脚本-->
+        <action name="deleteScript" class="action.ScriptAction" method="deleteScriptById">
+            <result name="success" type="redirect">script.action</result>
+            <result name="failure">/jsp/scriptList.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--编辑脚本-->
+        <action name="updateScript" class="action.ScriptAction" method="updateScript">
+            <result name="success" type="redirect">script.action</result>
+            <result name="failure">/jsp/addScript.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--执行脚本-->
+        <action name="scriptRun" class="action.ScriptAction" method="runScript">
+            <result name="success">/jsp/runningTask.jsp</result>
+            <result name="failure">/jsp/addScript.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+        <!--执行多个脚本-->
+        <action name="moreScriptRun" class="action.ScriptAction" method="runScript">
+            <result name="success">/jsp/runningTask.jsp</result>
+            <result name="failure">/jsp/addScript.jsp</result>
+            <interceptor-ref name="myInterceptor"/>
+        </action>
+
+    </package>
+</struts>

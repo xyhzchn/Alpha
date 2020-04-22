@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.1.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+    <!--加载数据库配置文件-->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+    <!--(重要步骤）c3p0连接池配置-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value='root'/>
+        <property name="password" value="${password}"/>
+        <property name="driverClass" value="${driverClass}" />
+        <property name="jdbcUrl" value="${jdbcUrl}" />
+
+        <property name="initialPoolSize" value="50"/>
+        <property name="maxPoolSize" value="200"/>
+        <property name="minPoolSize" value="50"/>
+
+        <property name="preferredTestQuery" value="SELECT 1"/>
+        <property name="idleConnectionTestPeriod" value="18000"/>
+        <property name="testConnectionOnCheckout" value="true"/>
+    </bean>
+
+<!--（重要步骤）spring整合hibernate配置，这里将hibernate创建sessionFactory的方法交给Spring管理 -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <!-- 注入datasource-->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 配置 hibernate 配置文件的位置及名称 -->
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
+        <!-- 配置 hibernate 映射文件的位置及名称, 可以使用通配符
+        <property name="mappingLocations" value="classpath:com/ssh/bean/*.hbm.xml"></property>-->
+    </bean>
+
+    <!-- （重要步骤）配置Hibernate事务，如果不开启，数据库是read_only状态-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!--开启事务注解-->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!--配置hibernate的jdbc模板-->
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <!--登录相关-->
+    <bean id="loginAction" class="action.LoginAction">
+        <property name="loginService" ref="loginService" />
+    </bean>
+    <bean id="loginService" class="serviceImpl.LoginServiceImpl">
+        <property name="loginDao" ref="loginDao" />
+    </bean>
+    <bean id="loginDao" class="daoImpl.LoginDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    <!--用户相关-->
+    <bean id="userAction" class="action.UserAction">
+        <property name="service" ref="service" />
+    </bean>
+    <bean id="service" class="serviceImpl.UserServiceImpl">
+        <property name="userDao" ref="userDao" />
+    </bean>
+    <bean id="userDao" class="daoImpl.UserDaompl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--角色相关-->
+    <bean id="roleAction" class="action.RoleAction">
+        <property name="roleService" ref="roleService" />
+    </bean>
+    <bean id="roleService" class="serviceImpl.RoleServiceImpl">
+        <property name="roleDao" ref="roleDao" />
+    </bean>
+    <bean id="roleDao" class="daoImpl.RoleDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--目录树相关-->
+    <bean id="treeAction" class="action.TreeAction">
+        <property name="treeService" ref="treeService" />
+    </bean>
+    <bean id="treeService" class="serviceImpl.TreeServiceImpl">
+        <property name="treeDao" ref="treeDao" />
+    </bean>
+    <bean id="treeDao" class="daoImpl.TreeDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--用例相关-->
+    <bean id="caseAction" class="action.CaseAction">
+        <property name="caseService" ref="caseService" />
+    </bean>
+    <bean id="caseService" class="serviceImpl.CaseServiceImpl">
+        <property name="caseDao" ref="caseDao" />
+    </bean>
+    <bean id="caseDao" class="daoImpl.CaseDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--任务相关-->
+    <bean id="taskAction" class="action.TaskAction">
+        <property name="taskService" ref="taskService" />
+    </bean>
+    <bean id="taskService" class="serviceImpl.TaskServiceImpl">
+        <property name="taskDao" ref="taskDao" />
+    </bean>
+    <bean id="taskDao" class="daoImpl.TaskDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--执行用例相关-->
+    <bean id="RunAction" class="action.RunAction">
+        <property name="runService" ref="runService" />
+    </bean>
+    <bean id="runService" class="serviceImpl.RunServiceImpl">
+        <property name="runDao" ref="runDao" />
+    </bean>
+    <bean id="runDao" class="daoImpl.RunDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--脚本相关-->
+    <bean id="ScriptAction" class="action.ScriptAction">
+        <property name="scriptService" ref="scriptService" />
+    </bean>
+    <bean id="scriptService" class="serviceImpl.ScriptServiceImpl">
+        <property name="scriptDao" ref="scriptDao" />
+    </bean>
+    <bean id="scriptDao" class="daoImpl.ScriptDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+</beans>

@@ -1,0 +1,111 @@
+
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@3.0">
+    <actions/>
+    <description></description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.0">
+            <gitLabConnection></gitLabConnection>
+        </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.StringParameterDefinition>
+                    <name>testCase</name>
+                    <description></description>
+                    <defaultValue></defaultValue>
+                </hudson.model.StringParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.3">
+        <configVersion>2</configVersion>
+        <userRemoteConfigs>
+            <hudson.plugins.git.UserRemoteConfig>
+                <url>ssh://git@gitlab-wenba.xueba100.com:9922/xiaoxue.guo/AutomationTestScript.git</url>
+                <credentialsId>7b57b589-0fc3-40b9-95b1-9ec0591bc670</credentialsId>
+            </hudson.plugins.git.UserRemoteConfig>
+        </userRemoteConfigs>
+        <branches>
+            <hudson.plugins.git.BranchSpec>
+                <name>*/master</name>
+            </hudson.plugins.git.BranchSpec>
+        </branches>
+        <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <submoduleCfg class="list"/>
+        <extensions/>
+    </scm>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers/>
+    <concurrentBuild>false</concurrentBuild>
+    <rootModule>
+        <groupId>macacaTest</groupId>
+        <artifactId>com.wenba.aixue</artifactId>
+    </rootModule>
+    <goals>test -Dtest=$testCase</goals>
+    <aggregatorStyleBuild>true</aggregatorStyleBuild>
+    <incrementalBuild>false</incrementalBuild>
+    <ignoreUpstremChanges>false</ignoreUpstremChanges>
+    <ignoreUnsuccessfulUpstreams>false</ignoreUnsuccessfulUpstreams>
+    <archivingDisabled>false</archivingDisabled>
+    <siteArchivingDisabled>false</siteArchivingDisabled>
+    <fingerprintingDisabled>false</fingerprintingDisabled>
+    <resolveDependencies>false</resolveDependencies>
+    <processPlugins>false</processPlugins>
+    <mavenValidationLevel>-1</mavenValidationLevel>
+    <runHeadless>false</runHeadless>
+    <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+    <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+    <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+    <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    <reporters/>
+    <publishers>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.61">
+            <recipientList>$DEFAULT_RECIPIENTS</recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>xiaoxue.guo@wenba100.com</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>$PROJECT_DEFAULT_CONTENT</body>
+                        <recipientProviders>
+                            <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
+                        </recipientProviders>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>$DEFAULT_SUBJECT</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
+            <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>$DEFAULT_REPLYTO</replyTo>
+            <saveOutput>false</saveOutput>
+            <disabled>false</disabled>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers/>
+    <prebuilders>
+        <hudson.tasks.BatchFile>
+            <command>start /b  macaca server --verbose</command>
+        </hudson.tasks.BatchFile>
+    </prebuilders>
+    <postbuilders/>
+    <runPostStepsIfResult>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+    </runPostStepsIfResult>
+</maven2-moduleset>
