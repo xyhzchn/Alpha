@@ -13,7 +13,7 @@
     <spring.version>4.2.4.RELEASE</spring.version>
     <struts.version>2.3.24</struts.version>
     <hibernate.version>4.3.0.Final</hibernate.version>
-    <mysql.version>5.1.26</mysql.version>
+    <mysql.version>8.0.16</mysql.version>
   </properties>
   <dependencies>
     <!--引入Junit依赖-->
